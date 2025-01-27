@@ -1,6 +1,6 @@
 import iziToast from "izitoast";
 
-export const createGalleryCardTemplate = imgInfo => {
+export const createGalleryImgTemplate = imgInfo => {
     return `
         <li class="gallery-card">
             <a href="${imgInfo.largeImageURL}">
