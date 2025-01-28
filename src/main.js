@@ -14,7 +14,7 @@ let totalPages = 0;
 const onFormSubmit =  async event => {
         event.preventDefault();      
         searchedQuery = event.currentTarget.elements.search.value.trim();
-
+   
     if (searchedQuery === '') {
         showAlert('Enter text to search!');
         return;
@@ -33,9 +33,9 @@ const onFormSubmit =  async event => {
             formSearch.reset();
             return;
         }
-
+       
         totalPages = data.totalHits;
-
+        
         const imagesCardsTemplate = data.hits.map(el => createGalleryImgTemplate(el)).join('');
         galleryEl.innerHTML = imagesCardsTemplate;
  
@@ -64,20 +64,30 @@ const onLoadMoreBtnClick = async () => {
     if (page < totalPages) {
         page++;
         loader.classList.add('active');
-     };
+    } else {
+        return;
+    }
         
  try {
-        const { data } = await fetchImages(searchedQuery, page, 15);
+        const { data } = await fetchImages(searchedQuery, page);
         const galleryTemplate = data.hits.map(el => createGalleryImgTemplate(el)).join('');
         galleryEl.insertAdjacentHTML('beforeend', galleryTemplate);
 
-      const lightbox = new SimpleLightbox('.gallery-card a', {
+     const lightbox = new SimpleLightbox('.gallery-card a', {
             captionDelay: 250,
             captionsData: 'alt',
         });
-
      lightbox.refresh();
      
+     const imgCard = galleryEl.querySelector('.gallery-card');
+     if (imgCard) { 
+         const imgCardHeigth = imgCard.getBoundingClientRect().height;
+         window.scrollBy({
+             top: imgCardHeigth * 2,
+            behavior: 'smooth' 
+         });
+     };
+
         if (page >= totalPages) { 
             btnLoadMore.classList.add('is-hidden');
             showAlert( "We're sorry, but you've reached the end of search results.");
